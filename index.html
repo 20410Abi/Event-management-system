@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" >
+    <link rel ="stylesheet" href ="style.css">
+    <script src='main.js'></script>
+    <title>Event Management</title>
+  </head>
+  <body>
+    <!--NaVbar-->
+    <nav class  ="navbar navbar-expand-sm  fixed-top">
+        <a href=""  class = "navbar-brand">Eventus</a>
+        <div class="navbar-nav-container">
+            <ul class ="navbar-nav">
+                <li class ="nav-item"><a href="/index.html" class ="nav-link">Home</a></li>
+                <li class ="nav-item"><a href="/event.html" class ="nav-link">Events</a></li>
+                <li class ="nav-item"><a href="/contact.html" class ="nav-link">Contact</a></li>
+                <li class ="nav-item"><a href="/login.html" class ="nav-link">Admin Login</a></li>
+            </ul>
+            <form id="searchForm">
+                <input id="searchInput" type="search" placeholder="Search events" aria-label="Search" oninput="searchEvents()">
+                <button type="button" onclick="searchEvents()">Search</button>
+            </form>
+        </div>
+    </nav>
+    <!--Header section-->
+    <div class ="header">
+        <div class="img-parent">
+            <div class ="img">
+                <img src="event.jpg"  alt="event">
+            </div>
+            <div class ="img-overlay">
+
+            </div>
+        </div>
+        <div class ="img-content">
+            <h2>Bonjour les gars</h2>
+            <span>
+ From seamless registration and ticketing to real-time communication and analytics, our system provides a user-friendly, customizable solution for event organizers of all sizes. With automation tools, mobile accessibility, and robust security, we ensure that events are not only efficient but also secure and engaging.
+
+              "Streamline your event management with a powerful, all-in-one solution built for success
+
+              "
+            </span>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <h2 class="text-center">Upcoming Events</h2>
+    <div class="scrollable-section">
+        <section id="eventsSection" class="events-section">
+            <!-- Event cards will be injected here -->
+        </section>
+    </div>
+
+
+    <div class="container my-5" id="pricingSection" style="display: none;">
+        <div class="row justify-content-center">
+            <!-- Basic Plan -->
+            <div class="col-md-4">
+                <div class="card pricing-card shadow-sm">
+                    <div class="card-header text-center bg-light">
+                        <h3>Basic</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="price" id="basicPrice">$0</h2>
+                        <ul class="list-unstyled">
+                            <li>5 Events per month</li>
+                            <li>Email Support</li>
+                            <li>Basic Analytics</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-primary">Choose Basic</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advance Plan -->
+            <div class="col-md-4">
+                <div class="card pricing-card shadow-sm">
+                    <div class="card-header text-center bg-light">
+                        <h3>Advance</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="price" id="advancedPrice">$0</h2>
+                        <ul class="list-unstyled">
+                            <li>20 Events per month</li>
+                            <li>Email & Phone Support</li>
+                            <li>Advanced Analytics</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">Choose Advance</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="col-md-4">
+                <div class="card pricing-card shadow-lg">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h3>Pro</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="price" id="proPrice">$0</h2>
+                        <ul class="list-unstyled">
+                            <li>Unlimited Events</li>
+                            <li>24/7 Support</li>
+                            <li>Premium Analytics</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-light bg-primary">Choose Pro</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="img1 text-center p-4">
+      <img src="event1.jpg" alt="Event Cycle" class="img-fluid rounded shadow-lg mb-3">
+      <h4 class="font-weight-bold">Enhancing Your Event Experience</h4>
+      <p class="text-muted">
+        Our system provides the expertise and tools you need to streamline your event process, making it more efficient and easier to manage. We ensure seamless coordination, bringing your vision to life effortlessly.
+      </p>
+    </div>
+    <div class="img2 text-center p-4">
+      <img src="event2.jpg" alt="Event Cycle" class="img-fluid rounded shadow-lg mb-3">
+      <h4 class="font-weight-bold">Ease your complex schedule </h4>
+      <p class="text-muted">
+        Effortlessly manage and organize your events with our intuitive platform. Simplify your planning, streamline communication, and ensure every detail is handled seamlessly, so you can focus on what matters most.
+
+      </p>
+    </div>
+  <footer>
+    <div class = "container">
+        <div class="row text-center justify-content-center">
+            <div class="col-sm-2">
+                <h6>
+                    About
+                </h6>
+                <span>
+                    History
+                </span>
+                <br>
+
+                <span>
+                    Experience
+                </span>
+                <br>
+                <span>
+                    Expertise
+                </span>
+            </div>
+
+
+                <div class="col-sm-2">
+                    <h6>
+                        Career
+                    </h6>
+                    <span>
+                        Oppurtunity
+                    </span>
+                    <br>
+
+                    <span>
+                        Openings
+                    </span>
+                    <br>
+                    <span>
+                        Roles
+                    </span>
+                </div>
+
+
+
+
+            <div class="col-sm-2">
+                <h6>
+                    Plans
+                </h6>
+                <span>
+                    Basic
+                </span>
+                <br>
+
+                <span>
+                    Advance
+                </span>
+                <br>
+                <span>
+                    Pro
+                </span>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <h6>
+                        Contact
+                    </h6>
+                    <span>
+                        Connect
+                    </span>
+                    <br>
+
+                    <span>
+                        Mail
+                    </span>
+                    <br>
+                    <span>
+                        Reach
+                    </span>
+                    </div>
+
+    </div>
+    </div>
+  </footer>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+    <script>
+      $(document).scroll(function () {
+       $(".navbar").toggleClass("scroll",$(this).scrollTop()>$(".navbar").height());
+      })
+  </script>
+
+  </body>
+</html>
