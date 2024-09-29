@@ -335,6 +335,8 @@ footer span{
 .highlighted {
     border: 1px solid #28a745;
 }
-
+.event-img{
+    height: 150px;
+}
 
 
