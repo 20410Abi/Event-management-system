@@ -58,7 +58,7 @@
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
+        event.preventDefault();
 
         // Get input values
         const email = document.getElementById('email').value;
@@ -73,7 +73,6 @@
             // Redirect to dashboard.html
             window.location.href = '/dashboard.html';
         } else {
-            // Show error message
             document.getElementById('errorMessage').style.display = 'block';
         }
     });
