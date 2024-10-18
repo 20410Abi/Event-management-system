@@ -267,8 +267,72 @@ function createDummyEvents() {
     }
 }
 
+// Firebase configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyCzwX9j17BP_tfuunnk6bes9NSMH9avMBI",
+    authDomain: "loginauthapp-d902c.firebaseapp.com",
+    projectId: "loginauthapp-d902c",
+    storageBucket: "loginauthapp-d902c.appspot.com",
+    messagingSenderId: "258541002560",
+    appId: "1:258541002560:web:4feef713853e1c3720e4a5",
+    measurementId: "G-0QRWH5YE84"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Ensure the DOM and Firebase are ready before executing code
 window.onload = function() {
+    // Load events if needed
     createDummyEvents();
     loadEvents();
+
+    // Google Login
+    const googleLoginBtn = document.getElementById('google-login');
+    googleLoginBtn.addEventListener('click', () => {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            console.log('User signed in with Google:', result.user);
+        })
+        .catch((error) => {
+            console.error('Error during Google login:', error);
+        });
+    });
+
+    // Facebook Login
+    const facebookLoginBtn = document.getElementById('facebook-login');
+    facebookLoginBtn.addEventListener('click', () => {
+        var provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            console.log('User signed in with Facebook:', result.user);
+        })
+        .catch((error) => {
+            console.error('Error during Facebook login:', error);
+        });
+    });
+
+    // Gmail Login (via Email)
+    const gmailLoginBtn = document.getElementById('gmail-login');
+    gmailLoginBtn.addEventListener('click', () => {
+        const email = prompt('Enter your Gmail address');
+        const password = prompt('Enter your password');
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            console.log('User signed in with Gmail:', userCredential.user);
+        })
+        .catch((error) => {
+            console.error('Error during Gmail login:', error);
+        });
+    });
 };
+
+
+     
+
+
+
+
+
+
 
