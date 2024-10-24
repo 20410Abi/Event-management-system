@@ -61,6 +61,27 @@
         </section>
     </div>
 
+    <!-- Email Input Modal -->
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="emailModalLabel">Enter Your Email</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div class="form-group">
+                <label for="emailInputModal">Email:</label>
+                <input type="email" class="form-control" id="emailInputModal" placeholder="you@example.com">
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="registerForEvent()">Register</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <div class="container my-5" id="pricingSection" style="display: none;">
         <div class="row justify-content-center">
@@ -77,7 +98,7 @@
                             <li>Email Support</li>
                             <li>Basic Analytics</li>
                         </ul>
-                        <a href="#" class="btn btn-outline-primary">Choose Basic</a>
+                        <button onclick="choosePricing('free')" class="btn btn-outline-primary">Choose Basic</button>
                     </div>
                 </div>
             </div>
@@ -95,7 +116,7 @@
                             <li>Email & Phone Support</li>
                             <li>Advanced Analytics</li>
                         </ul>
-                        <a href="#" class="btn btn-primary">Choose Advance</a>
+                        <button onclick="choosePricing('advanced')" class="btn btn-primary">Choose Advance</button>
                     </div>
                 </div>
             </div>
@@ -113,7 +134,7 @@
                             <li>24/7 Support</li>
                             <li>Premium Analytics</li>
                         </ul>
-                        <a href="#" class="btn btn-outline-light bg-primary">Choose Pro</a>
+                        <button onclick="choosePricing('pro')" class="btn btn-outline-light bg-primary">Choose Pro</button>
                     </div>
                 </div>
             </div>

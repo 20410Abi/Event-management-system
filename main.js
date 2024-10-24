@@ -9,27 +9,47 @@ function showSection(sectionId) {
     document.getElementById(sectionId).style.display = 'block';
 }
 
+
+// API base URL
+const API_BASE_URL = 'http://localhost:8080/events';
+
+// Function to make API requests
+async function makeApiRequest(endpoint, method = 'GET', data = null) {
+    const options = {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+
+// Reusable function to clear form fields
+function clearFormFields(formId) {
+    document.querySelectorAll(`#${formId} input`).forEach(input => input.value = '');
+}
+
 // Create Event Functionality
-function createNewEvent() {
-    console.log('createEvent called')
+async function createNewEvent() {
     const name = document.getElementById('createName').value;
     const date = document.getElementById('createDate').value;
     const location = document.getElementById('createLocation').value;
-
     const freePrice = document.getElementById('priceFree').value;
     const advancedPrice = document.getElementById('priceAdvanced').value;
     const proPrice = document.getElementById('pricePro').value;
 
     if (name && date && location && freePrice && advancedPrice && proPrice) {
-        // Get current events from local storage
-        let events = JSON.parse(localStorage.getItem('events')) || [];
-
-        // Check if the event name is unique
-        if (events.some(event => event.name === name)) {
-            alert('Event with this name already exists. Please use a unique name.');
-            return;
-        }
-
         // Create event object
         const newEvent = {
             name: name,
@@ -42,130 +62,97 @@ function createNewEvent() {
             }
         };
 
-        // Add new event to the list of events
-        events.push(newEvent);
+        // Send POST request to create the event
+        const response = await makeApiRequest('/', 'POST', newEvent);
 
-        // Save back to local storage
-        localStorage.setItem('events', JSON.stringify(events));
-
-        alert(`Event Created: ${name} on ${date}`);
-
-        // Clear form fields after submission
-        document.getElementById('createName').value = '';
-        document.getElementById('createDate').value = '';
-        document.getElementById('createLocation').value = '';
-        document.getElementById('priceFree').value = '';
-        document.getElementById('priceAdvanced').value = '';
-        document.getElementById('pricePro').value = '';
-
+        if (response) {
+            alert(`Event Created: ${name} on ${date}`);
+            loadEvents();  // Refresh the event list
+            clearFormFields('createEventForm');
+        }
     } else {
         alert('Please provide valid event details.');
     }
 }
 
-
 // Edit Event Functionality
-function editEvent() {
+async function editEvent() {
     const name = document.getElementById('editName').value;
     const date = document.getElementById('editDate').value;
     const location = document.getElementById('editLocation').value;
-
     const freePrice = document.getElementById('editPriceFree').value;
     const advancedPrice = document.getElementById('editPriceAdvanced').value;
     const proPrice = document.getElementById('editPricePro').value;
 
-    // Get the existing events from local storage
-    let events = JSON.parse(localStorage.getItem('events')) || [];
+    // Get the existing event data from the backend
+    const events = await makeApiRequest('/');
+    const event = events.find(e => e.name === name);
 
-    // Find the event by the current name
-    let eventIndex = events.findIndex(event => event.name === name);
+    if (event) {
+        // Update the event details
+        const updatedEvent = {
+            name: name,
+            date: date,
+            location: location,
+            pricing: {
+                free: parseFloat(freePrice),
+                advanced: parseFloat(advancedPrice),
+                pro: parseFloat(proPrice)
+            }
+        };
 
-    if (eventIndex !== -1) {
-        // Check if all new fields are valid
-        if (name && date && location && freePrice && advancedPrice && proPrice) {
-            // Update the event details
-            events[eventIndex] = {
-                name: name,
-                date: date,
-                location: location,
-                pricing: {
-                    free: parseFloat(freePrice),
-                    advanced: parseFloat(advancedPrice),
-                    pro: parseFloat(proPrice)
-                }
-            };
+        // Send PUT request to update the event
+        const response = await makeApiRequest(`/${event._id}`, 'PUT', updatedEvent);
 
-            // Save the updated events back to local storage
-            localStorage.setItem('events', JSON.stringify(events));
-
+        if (response) {
             alert(`Event Updated: ${name} on ${date}`);
-
-            // Clear form fields after submission
-            document.getElementById('editName').value = '';
-            document.getElementById('editDate').value = '';
-            document.getElementById('editLocation').value = '';
-            document.getElementById('editPriceFree').value = '';
-            document.getElementById('editPriceAdvanced').value = '';
-            document.getElementById('editPricePro').value = '';
-
-        } else {
-            alert('Please provide valid event details.');
+            loadEvents();  // Refresh the event list
+            clearFormFields('editEventForm');
         }
     } else {
         alert('Event not found. Please provide a valid event name.');
     }
 }
 
-
 // Delete Event Functionality
-function deleteEvent() {
+async function deleteEvent() {
     const name = document.getElementById('deleteName').value;
 
-    if (name) {
-        // Get current events from local storage
-        let events = JSON.parse(localStorage.getItem('events')) || [];
+    // Get the existing event data from the backend
+    const events = await makeApiRequest('/');
+    const event = events.find(e => e.name === name);
 
-        // Find the index of the event to delete
-        const eventIndex = events.findIndex(event => event.name === name);
+    if (event) {
+        // Send DELETE request to remove the event
+        const response = await makeApiRequest(`/${event._id}`, 'DELETE');
 
-        if (eventIndex !== -1) {
-            // Remove the event from the array
-            events.splice(eventIndex, 1);
-
-            // Save the updated events back to local storage
-            localStorage.setItem('events', JSON.stringify(events));
-
+        if (response) {
             alert(`Event Deleted: ${name}`);
-
-            // Clear the input field
-            document.getElementById('deleteName').value = '';
-        } else {
-            alert('Event not found. Please provide a valid event name.');
+            loadEvents();  // Refresh the event list
+            clearFormFields('deleteEventForm');
         }
     } else {
-        alert('Please provide a valid event name.');
+        alert('Event not found. Please provide a valid event name.');
     }
 }
 
-// Function to load events from localStorage and display them as cards
-function loadEvents() {
-    const events = JSON.parse(localStorage.getItem('events')) || [];
-
+// Load events from the backend and display them as cards
+async function loadEvents() {
+    const events = await makeApiRequest('/');
     const eventsSection = document.getElementById('eventsSection');
     eventsSection.innerHTML = ''; // Clear previous content
 
     if (events.length > 0) {
-        // Loop through each event and create cards
         events.forEach(event => {
             const eventCard = document.createElement('div');
             eventCard.classList.add('event-card');
 
             eventCard.innerHTML = `
-                        <h3>${event.name}</h3>
-                        <p>Date: ${event.date}</p>
-                        <p>Location: ${event.location}</p>
-                        <button onclick="showPricing('${event.name}')">Show Pricing</button>
-                    `;
+                <h3>${event.name}</h3>
+                <p>Date: ${event.date}</p>
+                <p>Location: ${event.location}</p>
+                <button onclick="showPricing('${event.name}')">Show Pricing</button>
+            `;
 
             eventsSection.appendChild(eventCard);
         });
@@ -174,101 +161,100 @@ function loadEvents() {
     }
 }
 
-// Function to display pricing for the selected event
-function showPricing(eventName) {
-    // Fetch events from localStorage
-    const events = JSON.parse(localStorage.getItem('events')) || [];
+let selectedPricing = null;
+let selectedEventName = null;
 
-    // Find the selected event by name
+// Show pricing for a specific event
+async function showPricing(eventName) {
+    const events = await makeApiRequest('/');
     const event = events.find(e => e.name === eventName);
 
     if (event) {
-        // Update the pricing section with the event prices
+        selectedEventName = eventName;
         document.getElementById('basicPrice').textContent = `$${event.pricing.free}`;
         document.getElementById('advancedPrice').textContent = `$${event.pricing.advanced}`;
         document.getElementById('proPrice').textContent = `$${event.pricing.pro}`;
-
-        // Show the pricing section
         document.getElementById('pricingSection').style.display = 'block';
-
-        // Remove highlighted class from all cards
-        const eventCards = document.querySelectorAll('.event-card');
-        eventCards.forEach(card => {
-            card.classList.remove('highlighted');
-        });
-
-        // Add highlighted class to the clicked card
-        const clickedCard = document.querySelector(`.event-card button[onclick="showPricing('${eventName}')"]`).parentElement;
-        clickedCard.classList.add('highlighted');
     }
 }
 
-// Function to filter and update events based on search input
-function searchEvents() {
-    const query = document.getElementById('searchInput').value.toLowerCase(); // Get the search query and convert to lowercase
-    const events = JSON.parse(localStorage.getItem('events')) || []; // Get events from localStorage
-    const eventsSection = document.getElementById('eventsSection'); // The section to display events
+function choosePricing(pricingOption) {
+    selectedPricing = pricingOption;
+    // Display the modal to collect email
+    const modal = new bootstrap.Modal(document.getElementById('emailModal'));
+    modal.show();
+}
 
-    // Clear the current content of the events section
-    eventsSection.innerHTML = '';
 
-    // Filter events by name or location
+async function registerForEvent() {
+    const email = document.getElementById('emailInputModal').value;
+    if (!email || !selectedPricing || !selectedEventName) {
+        alert('Please fill in all the required fields!');
+        return;
+    }
+
+    try {
+        const events = await makeApiRequest('/');
+        const event = events.find(e => e.name === selectedEventName);
+
+        if (event) {
+            // Update the fetch URL to the correct backend server URL
+            const response = await fetch(`http://localhost:8080/events/${event._id}/register`, {  // Correct backend URL here
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    pricingOption: selectedPricing
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('emailModal'));
+                modal.hide();
+                alert('Registration successful! Check your email for confirmation.');
+            } else {
+                const error = await response.json();
+                alert('Error: ' + error.message);
+            }
+        }
+    } catch (err) {
+       // handle error
+    }
+}
+
+// Search events based on input
+async function searchEvents() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const events = await makeApiRequest('/');
+    const eventsSection = document.getElementById('eventsSection');
+    eventsSection.innerHTML = ''; // Clear previous content
+
     const filteredEvents = events.filter(event =>
         event.name.toLowerCase().includes(query) || event.location.toLowerCase().includes(query)
     );
 
-    // Check if there are any matching events
     if (filteredEvents.length > 0) {
-        // Loop through each filtered event and display them
         filteredEvents.forEach(event => {
             const eventCard = document.createElement('div');
             eventCard.classList.add('event-card');
+
             eventCard.innerHTML = `
                 <h3>${event.name}</h3>
                 <p>Date: ${event.date}</p>
                 <p>Location: ${event.location}</p>
                 <button onclick="showPricing('${event.name}')">Show Pricing</button>
             `;
-            eventsSection.appendChild(eventCard); // Append the event card to the section
+
+            eventsSection.appendChild(eventCard);
         });
     } else {
-        // If no events match, display a "No results found" message
         eventsSection.innerHTML = '<p>No results found</p>';
     }
 }
 
-// Function to generate dummy events if none exist in localStorage
-function createDummyEvents() {
-    const events = JSON.parse(localStorage.getItem('events')) || [];
-
-    if (events.length === 0) {
-        const dummyEvents = [];
-        const locations = ['New York', 'Los Angeles', 'Chicago', 'San Francisco', 'Miami'];
-
-        for (let i = 1; i <= 5; i++) {
-            const event = {
-                name: `Event ${i}`,
-                date: `2024-10-${i < 10 ? '0' + i : i}`,
-                location: locations[i - 1],
-                pricing: {
-                    free: i * 10,
-                    advanced: i * 20,
-                    pro: i * 30
-                }
-            };
-            dummyEvents.push(event);
-        }
-
-        localStorage.setItem('events', JSON.stringify(dummyEvents));
-
-        console.log('5 dummy events created and added to localStorage.');
-    } else {
-        console.log('Events already exist in localStorage.');
-    }
-}
-
 window.onload = function() {
-    createDummyEvents();
     loadEvents();
 };
-
